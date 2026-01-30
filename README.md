@@ -45,6 +45,28 @@ System Workflow
 5. Confirmation: A booking confirmation is sent to the user.
 
 
+Logic Flow
+[Log In]
+   |
+   v
+[Dashboard] <-----------------------+
+   |                                |
+   v                                |
+[View Button]                       |
+   |                                |
+   v                                |
+[Booking Page]                      |
+   |                                |
+   v                                |
+[Available?]                        |
+   |                                |
+   +--- YES ---> [Booked]           |
+   |                                |
+   +---- NO ---> [Reserve]          |
+   |                                |
+   +---- NO ---> [Book Another Room]+
+
+
 Folder Structure
 BS1
     backend
