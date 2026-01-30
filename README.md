@@ -12,13 +12,13 @@ The project demonstrates the basics of frontend and backend interaction, user in
 
 
 ## Technologies Used
-- HTML – Page structure
+HTML – Page structure
 
--CSS – Styling and layout
+CSS – Styling and layout
 
--JavaScript – Client-side logic
+JavaScript – Client-side logic
 
--Backend (optional) – Can be extended using PHP, Node.js, or Python
+Backend (optional) – Can be extended using PHP, Node.js, or Python
 
--Git & GitHub – Version control
+Git & GitHub – Version control
 
