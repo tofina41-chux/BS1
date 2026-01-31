@@ -3,6 +3,7 @@ import { Search, Users, DoorOpen, Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import BookingModal from '../components/BookingModal';
 
 const allRooms = [
     {
@@ -66,7 +67,12 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [currentView, setCurrentView] = useState('available'); // 'available', 'reserved', 'booked', 'home'
+    const [currentView, setCurrentView] = useState('available');
+
+    // Modal State
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [modalType, setModalType] = useState('booking'); // 'booking' or 'reservation'
 
     const handleNavigate = (viewId) => {
         if (viewId === 'home') {
@@ -81,6 +87,12 @@ const Dashboard = () => {
         navigate('/login');
     };
 
+    const openModal = (room, type) => {
+        setSelectedRoom(room);
+        setModalType(type);
+        setIsModalOpen(true);
+    };
+
     // Filter rooms based on search term AND current view
     const filteredRooms = allRooms.filter(room => {
         const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,7 +101,7 @@ const Dashboard = () => {
         const matchesView = currentView === 'available' ? room.status === 'Available' :
             currentView === 'reserved' ? room.status === 'Reserved' :
                 currentView === 'booked' ? room.status === 'Booked' :
-                    true; // Should catch all if logic fails, or strictly filtered
+                    true;
 
         return matchesSearch && matchesView;
     });
@@ -112,6 +124,13 @@ const Dashboard = () => {
                 currentView={currentView}
                 onNavigate={handleNavigate}
                 onLogout={handleLogout}
+            />
+
+            <BookingModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                room={selectedRoom}
+                type={modalType}
             />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
@@ -174,7 +193,7 @@ const Dashboard = () => {
 
                                 <div className="space-y-3">
                                     <button
-                                        onClick={() => alert(`Booking ${room.name}...`)}
+                                        onClick={() => openModal(room, 'booking')}
                                         className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors"
                                         disabled={room.status !== 'Available'}
                                     >
@@ -182,7 +201,7 @@ const Dashboard = () => {
                                         {room.status === 'Available' ? 'Book Room' : room.status}
                                     </button>
                                     <button
-                                        onClick={() => alert(`Reserving ${room.name} for later...`)}
+                                        onClick={() => openModal(room, 'reservation')}
                                         className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
                                     >
                                         <Bookmark className="w-4 h-4 mr-2" />
