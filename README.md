@@ -1,9 +1,9 @@
-Swahili Port Hub Room Booking System
+SwahiliPot Hub Room Booking System
 
 Overview
-The Swahili Port Hub Room Booking System is a digital platform designed to simplify how rooms and spaces within Swahili Port Hub are reserved, managed, and tracked. The system allows users to book available rooms while enabling administrators to manage availability, approvals, and records efficiently.
+The SwahiliPot Hub Room Booking System is a digital platform designed to simplify how rooms and spaces within SwahiliPot Hub are reserved, managed, and tracked. The system allows users to book available rooms while enabling administrators to manage availability, approvals, and records efficiently.
 
-This solution is ideal for meetings, creative sessions, training, co-working, and events hosted at Swahili Port Hub.
+This solution is ideal for meetings, creative sessions, training, co-working, and events hosted at SwahiliPot Hub.
 
 
 Objectives
@@ -45,39 +45,30 @@ System Workflow
 5. Confirmation: A booking confirmation is sent to the user.
 
 
-Logic Flow
+Project Structure
 
-[Log In]
-   |
-   V
-[Dashboard] <-----------------------+
-   |                                |
-   V                                |
-[View Button]                       |
-   |                                |
-   V                                |
-[Booking Page]                      |
-   |                                |
-   V                                |
-[Available?]                        |
-   |                                |
-   +--- YES ---> [Booked]           |
-   |                                |
-   +--- NO ---> [Reserve]           |
-                |                   |
-                V                   |
-           [Book Another Room] -----+
-
-
-Folder Structure
-BS1
-    backend
-        package.json
-        package-lock.json
-    frontend
-    index.js
-    package.json
-    README.md
+BS1/
+├── backend/
+│   ├── package.json
+│   └── package-lock.json
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   └── vite.config.js
+├── index.js
+├── package.json
+└── README.md
 
 
 Technology Stack
