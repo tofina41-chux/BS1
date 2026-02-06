@@ -571,6 +571,35 @@ app.get('/bookings/user/:userId', async (req, res) => {
     }
 });
 
+// GET MY BOOKINGS (Detailed Breakdown)
+app.get('/my-bookings/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const [bookings] = await dbPromise.query(
+            `SELECT 
+                b.id,
+                b.booking_date,
+                b.start_time,
+                b.end_time,
+                b.type,
+                b.status,
+                r.name as room_name,
+                r.space as location
+            FROM bookings b
+            JOIN rooms r ON b.room_id = r.id
+            WHERE b.user_id = ?
+            ORDER BY b.booking_date ASC, b.start_time ASC`,
+            [userId]
+        );
+
+        res.json(bookings);
+    } catch (error) {
+        console.error('Get my bookings error:', error);
+        res.status(500).json({ error: 'Failed to fetch my bookings' });
+    }
+});
+
 // CRON JOB: Send reminders every 30 minutes
 nodeCron.schedule('*/30 * * * *', async () => {
     console.log('⏰ Running booking reminder check...');

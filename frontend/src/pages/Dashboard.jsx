@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Users, DoorOpen, Bookmark } from 'lucide-react';
+import { Search, Users, DoorOpen, Bookmark, Calendar, Clock, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -15,6 +15,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('en-CA'));
+    const [userBookings, setUserBookings] = useState([]); // New state for 'My Bookings'
 
     const fetchRooms = async () => {
         setLoading(true);
@@ -38,7 +39,26 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchRooms();
+        fetchUserBookings();
     }, [currentView, selectedDate]);
+
+    // Fetch user bookings for "My Bookings" section
+    const fetchUserBookings = async () => {
+        try {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) return;
+
+            const user = JSON.parse(userStr);
+            const response = await fetch(`http://localhost:3000/my-bookings/${user.id}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setUserBookings(data);
+            }
+        } catch (err) {
+            console.error('Error fetching user bookings:', err);
+        }
+    };
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -108,6 +128,54 @@ const Dashboard = () => {
             />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+                {/* My Bookings Section - Condition Rendering */}
+                {userBookings.length > 0 && (
+                    <div className="mb-12 animate-fadeIn">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            <Bookmark className="w-6 h-6 text-blue-600" />
+                            My Bookings & Reservations
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {userBookings.map((booking) => (
+                                <div key={booking.id} className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition-all relative overflow-hidden group">
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                                    <div className="flex justify-between items-start mb-3">
+                                        <h3 className="text-lg font-bold text-gray-900">{booking.room_name}</h3>
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                                booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-red-100 text-red-800'
+                                            }`}>
+                                            {booking.status}
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-2 text-sm text-gray-600">
+                                        <div className="flex items-center gap-2">
+                                            <MapPin className="w-4 h-4 text-gray-400" />
+                                            <span>{booking.location}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Calendar className="w-4 h-4 text-gray-400" />
+                                            <span>{new Date(booking.booking_date).toDateString()}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Clock className="w-4 h-4 text-gray-400" />
+                                            <span>{booking.start_time.slice(0, 5)} - {booking.end_time.slice(0, 5)}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
+                                        <span className="capitalize font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                            {booking.type}
+                                        </span>
+                                        <span>ID: #{booking.id}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                     <div className="flex flex-col gap-1">
                         <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
